@@ -1,11 +1,8 @@
-# File Management System (C + JavaFX)
+# File Management System (Linux C Only)
 
-This project implements a simple file management system with:
+This project implements a simple file management system in a Linux environment using only the C language.
 
-- **Backend (Linux, C language):** core file-system-like operations.
-- **Frontend (Java + JavaFX):** graphical interface that calls the C backend.
-
-## Features
+## Required Operations
 
 - Create file
 - Open file
@@ -15,10 +12,9 @@ This project implements a simple file management system with:
 ## Project Structure
 
 - `cfs/` - C implementation for file operations over `./virtual_disk`
-- `javafx-ui/` - JavaFX interface
-- `report/PROJECT_REPORT.md` - written portion and analysis
+- `report/PROJECT_REPORT.md` - formal written report
 
-## 1) Build and run C backend (Linux)
+## Build and Run (Linux)
 
 ```bash
 cd cfs
@@ -29,23 +25,7 @@ gcc -Wall -Wextra -o fms main.c file_system.c
 ./fms search demo.txt
 ```
 
-## 2) Run JavaFX UI
+## Notes
 
-Compile and run in `javafx-ui` with your installed JavaFX SDK.
-
-Example (update `PATH_TO_FX`):
-
-```bash
-cd javafx-ui
-javac --module-path PATH_TO_FX/lib --add-modules javafx.controls src/main/java/com/fms/*.java
-java --module-path PATH_TO_FX/lib --add-modules javafx.controls -cp src/main/java com.fms.MainApp
-```
-
-From the UI, enter a file name and click:
-
-- `Create`
-- `Open`
-- `Close`
-- `Search`
-
-The output area shows responses from the C backend.
+- This repository is intentionally C-only for implementation code.
+- The report includes research comparisons and project documentation required by the assignment.

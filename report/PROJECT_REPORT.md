@@ -1,65 +1,107 @@
-# Written Report: File Management System
+# Formal Report: File Management System (Linux, C)
 
-## 1. Introduction
+## Abstract
 
-A file management system organizes files and directories, controls file access, and provides operations like create, open, close, and search. It is a core service in operating systems that enables users and applications to store and retrieve data safely and efficiently.
+This group project implements a simple file management system in a Linux environment using only the C language. The system supports core operations required in the assignment: create files, open files, close files, and search for files. In addition to implementation, this report presents research on modern file systems (macOS, Windows/PC, Linux, and flash drives), compares their characteristics, and discusses what happens when files are copied across different file systems.
 
-This project implements a small educational file management system. The implementation targets Linux and uses the C language for the file system logic, while JavaFX provides a user-friendly graphical interface.
+## Introduction
 
-## 2. Examples of Modern File Management Systems
+A file management system is responsible for storing, organizing, and retrieving files while tracking metadata and access state. It is a fundamental part of every operating system.  
 
-Modern operating systems use advanced file systems, including:
+This project is completed as a group project (group size: 3 or fewer members) and is graded as homework-equivalent work (worth five homework assignments). The project topic is a file management system, and implementation is performed under Linux with C language only, as required.
 
-- **ext4 (Linux):** journaling file system with strong reliability and good performance.
-- **XFS (Linux):** high-performance journaling file system, often used for large files and servers.
-- **NTFS (Windows):** supports permissions, journaling, encryption, and large volume sizes.
-- **APFS (macOS/iOS):** optimized for SSDs, supports snapshots and strong encryption.
+## Body
 
-These systems include sophisticated features such as metadata journaling, caching, crash recovery, permission models, and high scalability.
+### 1) Implemented File Management System
 
-## 3. Description of Implemented System
+The implemented system is located in `cfs/` and runs as a command-line program. It uses a folder named `virtual_disk` to simulate a storage area. The system supports:
 
-### 3.1 Implementation Constraints
+- `create <filename>`: create a new file
+- `open <filename>`: open an existing file and track it in an open-file table
+- `close <filename>`: close a previously opened file
+- `search <filename>`: verify whether a file exists
 
-- Language for file system core: **C**
-- Environment: **Linux**
-- User interface: **Java with JavaFX**
+The implementation uses C standard/POSIX-style file handling techniques appropriate for Linux development. The design keeps a small in-memory structure to track opened files and prevent duplicate opens.
 
-### 3.2 Design Overview
+### 2) Program Demonstration and Results
 
-The project contains two layers:
+The program compiles and runs in Linux with:
 
-1. **C backend (`cfs/`)**
-   - Handles file operations in a dedicated folder called `virtual_disk`.
-   - Supports:
-     - create file
-     - open file
-     - close file
-     - search file
-   - Maintains a small in-memory open-file table (`MAX_OPEN_FILES`) to simulate file state tracking.
+```bash
+cd cfs
+gcc -Wall -Wextra -o fms main.c file_system.c
+./fms create demo.txt
+./fms open demo.txt
+./fms close demo.txt
+./fms search demo.txt
+```
 
-2. **JavaFX frontend (`javafx-ui/`)**
-   - Provides buttons for each operation.
-   - Uses `ProcessBuilder` to execute the C backend command-line program.
-   - Displays command responses in a text output area.
+Observed behavior:
 
-### 3.3 Operation Flow
+- Create reports success when the file is newly created.
+- Open reports whether the file is opened, already opened, or missing.
+- Close reports whether the file was actually open.
+- Search reports whether the file exists.
 
-- **Create:** creates a file in `virtual_disk`.
-- **Open:** checks existence and marks file as open in the open table.
-- **Close:** removes file from open table.
-- **Search:** checks whether file exists in `virtual_disk`.
+These results confirm the required working implementation of a basic file management system.
 
-### 3.4 Limitations and Future Improvements
+### 3) Research and Comparison of Modern File Systems
 
-Current implementation is intentionally simple for educational goals. Potential improvements:
+#### macOS
+- **APFS** is the primary file system in modern macOS.
+- Optimized for SSDs and includes snapshots, cloning, and strong encryption support.
 
-- hierarchical directories
-- file metadata display (size/time/owner)
-- persistent open-state tracking
-- delete/rename/move operations
-- better validation and error mapping in UI
+#### PCs (Windows and Linux)
+- **NTFS (Windows PC):** supports ACL permissions, journaling, compression, and large files.
+- **exFAT (often used on Windows/external media):** good cross-platform compatibility, limited advanced metadata features.
+- **ext4 (Linux PC):** journaling, stable performance, widely used in Linux systems.
 
-## 4. Conclusion
+#### Flash Drives
+- Commonly formatted as **FAT32** or **exFAT**.
+- FAT32 has broad compatibility but file size limits.
+- exFAT supports larger files and is widely used for modern USB drives.
 
-This project demonstrates a practical and clear file management system design using a Linux C backend and JavaFX frontend. It satisfies required operations (create, open, close, search) and provides both implementation and written documentation consistent with the project topic.
+### 4) What Happens When Copying Across File Systems
+
+When a file is copied between different file systems, file data is usually preserved, but some metadata may be changed or lost depending on source/destination formats and OS rules.
+
+Possible changes include:
+
+- Permission bits or ACL details may not map exactly (for example, Linux permissions to FAT32/exFAT).
+- Extended attributes (xattrs), resource forks, or platform-specific metadata may be removed.
+- Timestamp precision can differ by file system.
+- Filename rules/encoding constraints can force renaming or sanitization.
+
+Therefore, the file contents generally remain intact, but metadata fidelity is not guaranteed across all combinations.
+
+### 5) Group Work Division
+
+The project tasks can be divided among up to three members as follows:
+
+- **Member 1:** core C implementation (create/open/close/search logic)
+- **Member 2:** testing, validation, and Linux build/run verification
+- **Member 3:** research, comparison analysis, and report/presentation preparation
+
+This division ensures balanced technical and documentation responsibilities.
+
+## Conclusion
+
+From the research work, we learned that different operating systems use different file systems with different strengths (for example, APFS on macOS, NTFS on Windows, and ext4 on Linux), and portable media often uses FAT32/exFAT for compatibility.  
+
+From the group work, we learned the importance of task division, integration, and validating implementation against requirements.  
+
+From the implementation results, we confirmed a working Linux C program that performs create, open, close, and search operations as required for a basic file management system.
+
+## Presentation and Grading Alignment
+
+At presentation time, the team will demonstrate the working Linux C program and explain implementation decisions and research findings. The report is prepared to be submitted with the presentation.
+
+Assignment scoring alignment:
+
+- Project Assignment-1: 5 points
+- Implementation and working program complexity: 25 points
+- Presentation: 5 points
+- Report: 15 points
+  - Research work and comparison: 5 points
+  - Explanation of implementation: 7 points
+  - Conclusion and introduction: 3 points
