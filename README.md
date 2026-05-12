@@ -19,7 +19,9 @@ Paths are relative to `virtual_disk`, for example `docs/notes.txt`. `..` and abs
 - `cfs/` - C implementation for file operations over `./virtual_disk`
 - `report/PROJECT_REPORT.md` - formal written report
 
-## Build and Run (Linux)
+## Build and Run (Linux or macOS)
+
+The `fms` program is **not** in the repository root. You must **build inside `cfs/`** and run it from there (or call it with a path).
 
 ```bash
 cd cfs
@@ -33,6 +35,12 @@ gcc -Wall -Wextra -o fms main.c file_system.c
 ./fms search subdir/demo.txt
 ./fms close subdir/demo.txt
 ./fms delete subdir/demo.txt
+```
+
+From the repo root (after compiling as above), you can also run:
+
+```bash
+./cfs/fms mkdir a/b
 ```
 
 ## Notes
