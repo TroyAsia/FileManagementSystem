@@ -2,7 +2,7 @@
 
 ## Abstract
 
-This group project implements a simple file management system in a Linux environment using only the C language. The system supports core operations required in the assignment: create files, open files, close files, and search for files. In addition to implementation, this report presents research on modern file systems (macOS, Windows/PC, Linux, and flash drives), compares their characteristics, and discusses what happens when files are copied across different file systems.
+This group project implements a simple file management system in a Linux environment using only the C language. The system supports create, open, close, read, write, search, and delete, with nested subdirectories under a simulated volume. In addition to implementation, this report presents research on modern file systems (macOS, Windows/PC, Linux, and flash drives), compares their characteristics, and discusses what happens when files are copied across different file systems.
 
 ## Introduction
 
@@ -14,14 +14,19 @@ This project is completed as a group project (group size: 3 or fewer members) an
 
 ### 1) Implemented File Management System
 
-The implemented system is located in `cfs/` and runs as a command-line program. It uses a folder named `virtual_disk` to simulate a storage area. The system supports:
+The implemented system is located in `cfs/` and runs as a command-line program. It uses a folder named `virtual_disk` to simulate a storage area. **Subdirectories are supported:** paths like `course/hw1/answer.txt` are allowed, with `mkdir` for explicit directory creation and automatic creation of parent directories when creating a file. Paths must be relative (no leading `/`) and must not contain `..` segments.
 
-- `create <filename>`: create a new file
-- `open <filename>`: open an existing file and track it in an open-file table
-- `close <filename>`: close a previously opened file
-- `search <filename>`: verify whether a file exists
+Supported commands:
 
-The implementation uses C standard/POSIX-style file handling techniques appropriate for Linux development. The design keeps a small in-memory structure to track opened files and prevent duplicate opens.
+- `mkdir <path>`: create a directory
+- `create <path>`: create a new empty regular file (fails if it already exists)
+- `open <path>` / `close <path>`: register and unregister an open file in a persistent open-file table
+- `read <path>`: stream file bytes to standard output (only if the file is currently open)
+- `write <path> [text...]`: overwrite the file (only if open); remaining arguments are joined with spaces to form the new contents
+- `search <path>`: test whether a regular file exists
+- `delete <path>`: remove a regular file and clear it from the open table if needed
+
+The implementation uses C standard I/O and POSIX directory APIs appropriate for Linux. Read and write require an open file so an instructor can verify the lifecycle: create, open, write data, read data back, then close or delete.
 
 ### 2) Program Demonstration and Results
 
@@ -30,20 +35,25 @@ The program compiles and runs in Linux with:
 ```bash
 cd cfs
 gcc -Wall -Wextra -o fms main.c file_system.c
-./fms create demo.txt
-./fms open demo.txt
-./fms close demo.txt
-./fms search demo.txt
+./fms mkdir demo/sub
+./fms create demo/sub/note.txt
+./fms open demo/sub/note.txt
+./fms write demo/sub/note.txt Example contents for grading.
+./fms read demo/sub/note.txt
+./fms search demo/sub/note.txt
+./fms close demo/sub/note.txt
+./fms delete demo/sub/note.txt
 ```
 
 Observed behavior:
 
-- Create reports success when the file is newly created.
-- Open reports whether the file is opened, already opened, or missing.
-- Close reports whether the file was actually open.
-- Search reports whether the file exists.
+- Create and mkdir report success or a clear error (for example, already exists).
+- Open and close enforce the open-file table and reject invalid paths.
+- Write persists bytes that read can display, demonstrating a retrievable file.
+- Search distinguishes regular files from missing paths.
+- Delete removes the file from the simulated disk.
 
-These results confirm the required working implementation of a basic file management system.
+These results confirm a demonstrable file management system suitable for testing and presentation.
 
 ### 3) Research and Comparison of Modern File Systems
 
@@ -78,7 +88,7 @@ Therefore, the file contents generally remain intact, but metadata fidelity is n
 
 The project tasks can be divided among up to three members as follows:
 
-- **Member 1:** core C implementation (create/open/close/search logic)
+- **Member 1:** core C implementation (paths, directories, create/open/close/read/write/search/delete)
 - **Member 2:** testing, validation, and Linux build/run verification
 - **Member 3:** research, comparison analysis, and report/presentation preparation
 
@@ -90,7 +100,7 @@ From the research work, we learned that different operating systems use differen
 
 From the group work, we learned the importance of task division, integration, and validating implementation against requirements.  
 
-From the implementation results, we confirmed a working Linux C program that performs create, open, close, and search operations as required for a basic file management system.
+From the implementation results, we confirmed a working Linux C program that performs create, open, close, read, write, search, and delete, including nested subdirectories, so file contents can be stored and retrieved for grading and demonstration.
 
 ## Presentation and Grading Alignment
 
