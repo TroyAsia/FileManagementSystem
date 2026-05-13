@@ -6,7 +6,7 @@ This project implements a simple file management system in a Linux environment u
 
 - **mkdir** - create subdirectories under `virtual_disk` (nested paths supported)
 - **create** - create a new empty file (fails if it already exists); parent directories are created automatically
-- **open** / **close** —-track open files in a persistent open-file table
+- **open** / **close** - track open files in a persistent open-file table
 - **read** - print file contents to stdout (file must be open first)
 - **write** - overwrite file contents (file must be open first); optional text after the path is stored as the file body
 - **search** - check whether a regular file exists at the given path
