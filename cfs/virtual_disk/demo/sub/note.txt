@@ -1,0 +1,1 @@
+Now this works because the file is open.
